@@ -13,7 +13,8 @@ public class Vehicle {
 	private static ArrayList<Vehicle> list = new ArrayList<Vehicle>();
 	public Vehicle() {
 		name = "";
-		speedMax = 0.0;	
+		speedMax = 0.0;
+		initialize();
 	}
 	
 	public Vehicle(String sName, double dSpeedMax) {
