@@ -35,16 +35,20 @@ public class Vehicle {
 
 		DecimalFormat df = new DecimalFormat("#.##");
 
-		System.out.println("\nID\tName\t\tMax Speed\tMileage\t\t\tTotal Time\tCurrent Time");
+		System.out.println("\nID\tName\t\tMax Speed\tMileage\t\tTotal Time\tCurrent Time");
 		String plus = "++++++++++++++++++++++++++++";
 		System.out.println(plus + plus + plus);
 		for (Vehicle veh : list) System.out.println(veh.id + "\t" + veh.name + "\t\t"
-			+ df.format(veh.speedMax) + "\t\t" + df.format(veh.mileage) + "\t\t\t" + df.format(veh.timeTotal) + "\t\t" 
+			+ df.format(veh.speedMax) + "\t\t" + df.format(veh.mileage) + "\t\t" + df.format(veh.timeTotal) + "\t\t" 
 			+ df.format(veh.timeCurrent));
 	}
 
 	public static void processing() {
-		for (Vehicle veh : list) veh.mileage = Traffic.timeGlobal * veh.speedMax;
+		for (Vehicle veh : list) {
+			veh.mileage = Traffic.timeGlobal * veh.speedMax;
+			veh.timeTotal = Traffic.timeGlobal;
+			veh.timeCurrent = Traffic.timeGlobal;
+		}
 	} 
 
 }
