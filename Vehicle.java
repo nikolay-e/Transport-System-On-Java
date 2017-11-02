@@ -2,11 +2,12 @@ import java.util.ArrayList;
 import java.text.DecimalFormat;
 
 public class Vehicle {
+
 	private String name;
 	private static int idMax = 1;
 	private int id;
-	private double speedMax;
 
+	private double speedMax;
 	private double mileage;
 	private double timeTotal;
 	private double timeCurrent;
@@ -17,7 +18,7 @@ public class Vehicle {
 		speedMax = 0.0;	
 		initialize();
 	}
-	
+
 	protected Vehicle(String sName, double dSpeedMax) {
 		name = sName;
 		speedMax = dSpeedMax;
@@ -25,26 +26,24 @@ public class Vehicle {
 	}
 
 	private void initialize() {
-
 		id = idMax;
 		idMax = idMax + 1;
         	timeTotal = 0.0;
         	timeCurrent = 0.0;
 		mileage = 0.0;
 		list.add(this);
-
 	}
 	
 	public static void printOut() {
 
 		DecimalFormat df = new DecimalFormat("#.##");
+		
+		System.out.printf("\n%-5s%-15s%-15s%-15s%-15s%-15s\n", "ID","Name", "Max Speed", "Mileage", "Total Time","Current Time");
 
-		System.out.println("\nID\tName\t\tMax Speed\tMileage\t\tTotal Time\tCurrent Time");
-		String plus = "++++++++++++++++++++++++++++";
-		System.out.println(plus + plus + plus);
-		for (Vehicle veh : list) System.out.println(veh.id + "\t" + veh.name + "\t\t"
-			+ df.format(veh.speedMax) + "\t\t" + df.format(veh.mileage) + "\t\t" + df.format(veh.timeTotal) + "\t\t" 
-			+ df.format(veh.timeCurrent));
+		for (Vehicle veh : list) 
+			System.out.printf("%-5s%-15s%-15s%-15s%-15s%-15s\n",
+				veh.id, veh.name, 
+				df.format(veh.speedMax), df.format(veh.mileage), df.format(veh.timeTotal), df.format(veh.timeCurrent));
 
 	}
 
