@@ -7,53 +7,61 @@ public class Vehicle {
 	private static int idMax = 1;
 	private int id;
 
-	private double speedMax;
-	private double mileage;
-	private double timeTotal;
-	private double timeCurrent;
+	private float speedMax;
+	private float mileage;
+	private float timeTotal;
+	private float timeCurrent;
+
+	protected static DecimalFormat df = new DecimalFormat("0.00");
 	private static ArrayList<Vehicle> list = new ArrayList<Vehicle>();
 
 	protected Vehicle() {
 		name = "";
-		speedMax = 0.0;	
+		speedMax = 0.0f;	
 		initialize();
 	}
 
-	protected Vehicle(String sName, double dSpeedMax) {
+	protected Vehicle(String sName, float fSpeedMax) {
 		name = sName;
-		speedMax = dSpeedMax;
+		speedMax = fSpeedMax;
 		initialize();
 	}
 
 	private void initialize() {
 		id = idMax;
 		idMax = idMax + 1;
-        	timeTotal = 0.0;
-        	timeCurrent = 0.0;
-		mileage = 0.0;
+        	timeTotal = 0.0f;
+        	timeCurrent = 0.0f;
+		mileage = 0.0f;
 		list.add(this);
 	}
 	
 	public static void printOut() {
 
-		DecimalFormat df = new DecimalFormat("#.##");
-		
-		System.out.printf("\n%-5s%-15s%-15s%-15s%-15s%-15s\n", "ID","Name", "Max Speed", "Mileage", "Total Time","Current Time");
+		System.out.println();
+		System.out.print("Total Time: ");
+		System.out.printf("%s\n", df.format(Traffic.timeGlobal));
+		System.out.printf("%-5s%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n", "ID","Name", "Max Speed", 
+			"Mileage","Current Time", "Consumption", "Tank Volume", "Tank Content");
 
-		for (Vehicle veh : list) 
-			System.out.printf("%-5s%-15s%-15s%-15s%-15s%-15s\n",
-				veh.id, veh.name, 
-				df.format(veh.speedMax), df.format(veh.mileage), df.format(veh.timeTotal), df.format(veh.timeCurrent));
+		for (Vehicle veh : list) {
+			veh.print();
+			System.out.println();
+		}
+
+		System.out.println();
 
 	}
 
-	public static void processing() {
+	protected void print() {
+		System.out.printf("%-5s%-15s%-15s%-15s%-15s", id, name, df.format(speedMax), df.format(mileage), df.format(timeCurrent));
+	}
 
+	public static void processing() {
 		for (Vehicle veh : list) {
 			veh.mileage = Traffic.timeGlobal * veh.speedMax;
 			veh.timeTotal = Traffic.timeGlobal;
 			veh.timeCurrent = Traffic.timeGlobal;
-
 		}
 	} 
 }

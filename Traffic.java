@@ -1,37 +1,27 @@
 public class Traffic {
 
-	public static double timeGlobal = 0.0;	
+	public static float timeGlobal = 0.0f;	//
 
 	public static void main(String[] arg){
 
-	Vehicle veh1 = new Vehicle();
-	Vehicle veh2 = new Vehicle("PID", -95.666);
+		Vehicle auto0 = new Vehicle();
+		Vehicle auto1 = new Vehicle("BMW", 260f);
+		Vehicle auto2 = new Vehicle("Audi", 200f);
+		Vehicle auto3 = new Vehicle("Toyota", 235f);
+		Vehicle auto4 = new Vehicle("UAZ", 180f);
+		Auto auto5 = new Auto();	
+		Auto auto6 = new Auto("GAZ", 151f);	
 
-	Vehicle byc1 = new Bycicle();
-	Vehicle byc2 = new Bycicle("BMX", 15);
-
-	Vehicle aut1 = new Auto();
-	Vehicle aut2 = new Auto("MOS", 56);
-
-	Vehicle.printOut();
-
-	}
 	
-	public void testPart1() {
-
-		Vehicle auto1 = new Vehicle("BMW", 260);
-		Vehicle auto2 = new Vehicle("Audi", 200);
-		Vehicle auto3 = new Vehicle("Toyota", 235);
-		Vehicle auto4 = new Vehicle("UAZ", 180);
-		Vehicle auto5 = new Vehicle("GAZ", 151);
 	
-		for(; timeGlobal < 15; timeGlobal += 0.01) {
+		while(timeGlobal < 15f) {
 
 			Vehicle.processing();
 			Vehicle.printOut();
+			timeGlobal += 0.01f;
 
 			try {
-				Thread.sleep(20);
+				Thread.sleep(100);
 			} catch(InterruptedException e) {
 				e.printStackTrace();						
 			}
