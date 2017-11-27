@@ -56,10 +56,24 @@ public class Auto extends Vehicle {
 		return freeVolume;
 	}
 
-
 	protected void print() {
 		super.print();
 		System.out.printf("%-15s%-15s%-15s", df.format(consumption), df.format(tankVolume), df.format(tankContent));
 	}
 
+	protected void processing() {
+		float mileageBefore = mileage;
+		super.processing();
+		float mileageAfter = mileage;
+
+		tankContent = tankContent - (mileageAfter - mileageBefore) * consumption / 100;
+
+		if (tankContent < 0) tankContent = 0;
+
+	}
+
+	protected float speed() {
+		if (tankContent == 0)  return speedCurrent =  0.0f;
+		else return speedCurrent =  speedMax;
+	}
 }
