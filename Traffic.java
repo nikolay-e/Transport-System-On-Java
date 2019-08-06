@@ -3,33 +3,40 @@ import java.util.ArrayList;
 
 public class Traffic {
 
-	public static float timeGlobal = 0.0f;	//
+	protected static float timeGlobal = 0.0f;
 
 	public static void main(String[] arg){
 
-		Vehicle auto0 = new Vehicle();
-		Vehicle auto1 = new Vehicle("BMW", 260f);
-		Vehicle auto2 = new Vehicle("Audi", 200f);
-		Vehicle auto3 = new Vehicle("Toyota", 235f);
-		Vehicle auto4 = new Vehicle("UAZ", 180f);
-		Auto auto5 = new Auto();	
+		Bicycle b = new Bicycle("Petya", 60f);
 		Auto auto6 = new Auto("GAZ", 151f, 15, 17, 512);
-		Auto auto8 = new Auto("GAZ2", 150f, 18, 15,597);
 
-		Bycicle auto7 = new Bycicle("BMX", 13);
-	
-		while(timeGlobal < 15f) {
+		Way way1 = new Way(100,20);
+		Way way2 = new Way(50,10);
 
-			Vehicle.processingAll();
+		b.add_way(way1);
+		b.add_way(way2);
+		auto6.add_way(way2);
+		auto6.add_way(way2);
+
+		while(runGlobalTime(150f)) {
 			Vehicle.printOut();
+			way1.processing();
+			way2.processing();
 
-			timeGlobal += 0.01f;
+			wait(2000);
+		}
+	}
 
-			try {
-				Thread.sleep(400);
-			} catch(InterruptedException e) {
-				e.printStackTrace();
-			}
+	protected static boolean runGlobalTime(float period) {
+		timeGlobal += 0.6f;
+		return timeGlobal < period;
+	}
+
+	protected static void wait(int int_ms){
+		try {
+			Thread.sleep(int_ms);
+		} catch(InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }
