@@ -1,108 +1,113 @@
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-
 public class Vehicle extends TransportSystem {
 
-	private String name;
-	private static int idMax = 1;
+	protected Way wayCurrent;
+
+	private String name = "";
 	private int id;
+	private static int maxId = 0;
 
-	protected float speedMax;
-	protected float speedCurrent;
+	protected double speedMax = 0.0;
+	protected double speedCurrent = 0.0;
 
-	protected Way currentWay;
-	public static ArrayList<Way> ways = new ArrayList<Way>();
+	protected double mileageWay = 0.0;
+	protected double mileageAll = 0.0;
 
-	protected float way_dist;
+	private double timeGlobal = 0.0;
+	private double timeCurrent = 0.0;
 
-	protected float mileage;
-	private float globalTime;
-	private float timeCurrent;
-
-	protected static DecimalFormat df = new DecimalFormat("0.00");
-	public static ArrayList<Vehicle> list = new ArrayList<Vehicle>();
+	protected ArrayList<Way> waysList = new ArrayList<Way>();
 
 	protected Vehicle() {
-		name = "";
-		speedMax = 0.0f;
-		speedCurrent = speedMax;
 		initialize();
 	}
 
-	protected Vehicle(String sName, float fSpeedMax) {
-		name = sName;
-		speedMax = fSpeedMax;
-		speedCurrent = speedMax;
+	protected Vehicle(String name, double speedMax) {
+		this.name = name;
+		this.speedMax = speedMax;
+		this.speedCurrent = speedMax;
 		initialize();
 	}
 
 	private void initialize() {
-		id = idMax;
-		idMax = idMax + 1;
-		globalTime = 0.0f;
-        timeCurrent = 0.0f;
-		mileage = 0.0f;
-		list.add(this);
+		this.id = maxId;
+		maxId += 1;
+		vehiclesList.add(this);
+	}
+
+	protected double run(double globalTime) {
+
+		timeGlobal = globalTime;
+
+		speedCurrent = speed();
+		
+		double mileageAllDelta = (timeGlobal - timeCurrent) * speedCurrent;
+		double mileageWayDelta = mileageAllDelta;
+
+		if (mileageWay + mileageAllDelta > wayCurrent.length) {
+
+			double mileageDeltaOldWay = wayCurrent.length - mileageWay;
+
+			if (waysList.size() == 1) {
+				mileageAllDelta = mileageDeltaOldWay;
+				mileageWayDelta = mileageDeltaOldWay;
+			} else if (waysList.size() > 1) {
+				double mileageDeltaNewWay = mileageAllDelta - mileageDeltaOldWay;
+
+				//TODO precise calculation of distances
+
+				waysList.remove(0);
+				wayCurrent = waysList.get(0);
+
+				mileageWay = 0;
+				mileageWayDelta = mileageDeltaNewWay;
+			} else {
+				System.out.println("ERROR waysList is empty!");
+			}
+
+		}
+
+		mileageAll = mileageAll + mileageAllDelta;
+		mileageWay = mileageWay + mileageWayDelta;
+
+		timeCurrent = timeGlobal;
+
+		return mileageAllDelta;
 	}
 	
-	public static void printOut() {
-		System.out.println();
-		System.out.printf("Total Time:  %s\n", df.format(Traffic.timeGlobal));
-		System.out.printf("%-5s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n", "ID","Name", "Max Speed", "Current Speed",
-			"Mileage","Current Time", "Consumption", "Tank Volume", "Tank Content");
-		for (Vehicle veh : list) {
-			veh.print();
-			System.out.println();
-		}
-		System.out.println();
+
+	protected double speed() {
+		if (waysList.size() == 1 && wayCurrent.length == mileageWay)
+			return 0.0;
+		else if (wayCurrent.speedLimit > speedMax)
+			return speedMax;
+		else
+			return wayCurrent.speedLimit;
 	}
 
 	protected void print() {
-		System.out.printf("%-5s%-15s%-15s%-15s%-15s%-15s", id, name, df.format(speedMax), df.format(speedCurrent), df.format(mileage), df.format(timeCurrent));
+
+		System.out.printf("%-5s", id);
+		System.out.printf("%-15s", name);
+
+		if (wayCurrent == null)
+			System.out.printf("%-15s", "NOWAY!!!");
+		else
+			System.out.printf("%-15s", wayCurrent.name);
+
+		System.out.printf("%-15s", df.format(speedMax));
+		System.out.printf("%-15s",df.format(speedCurrent));
+		System.out.printf("%-15s", df.format(mileageAll));
+		System.out.printf("%-15s", df.format(timeCurrent));
+
 	}
 
-	public static void processingAll() {
-		for (Vehicle veh : list) {
-			veh.processing();
+	public void addWay(Way way) {
+		waysList.add(way);
+		if (wayCurrent == null) {
+			wayCurrent = waysList.get(0);
+			speedCurrent = wayCurrent.speedLimit;
 		}
 	}
 
-	protected float processing() {
-		globalTime = Traffic.timeGlobal;
-
-		float mileageDelta = (globalTime - timeCurrent) * speed();
-
-		if (way_dist + mileageDelta > currentWay.length) {
-			mileageDelta = currentWay.length - way_dist;
-			way_dist = 0;
-			if (ways.size() > 1)
-			ways.remove(0);
-			currentWay = ways.get(0);
-		}
-
-		mileage = mileage + mileageDelta;
-		way_dist = way_dist + mileageDelta;
-
-		timeCurrent = globalTime;
-		return mileageDelta;
-	}
-
-	protected float speed() {
-		if (way_dist == currentWay.length)
-			return 0;
-
-		if (currentWay.speedLimit > speedMax)
-			return speedMax;
-		else
-			return currentWay.speedLimit;
-	}
-
-	public void add_way(Way way) {
-		if (ways.size()==0)
-			currentWay = way;
-		else
-			currentWay = ways.get(0);
-		ways.add(way);
-		way.add_vehicle(this);
-	}
 }

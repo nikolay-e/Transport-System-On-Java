@@ -1,29 +1,25 @@
 public class Bicycle extends Vehicle {
 
-	public Bicycle() {
-	
+	public Bicycle(String name, double speedMax) {
+		super(name, speedMax);
 	}
 
-	public Bicycle(String sName, float fSpeedMax) {
-		super(sName, fSpeedMax);
-	}
+	protected double speed() {
 
-	protected float speed() {
+		speedCurrent = super.speed() * (double) Math.pow(0.9, (int) mileageAll / 20);
 
-		speedCurrent = super.speed() * (float) Math.pow(0.9, (int) mileage / 20);
+		if (speedMax > 12.0) {
 
-		if (speedMax > 12f) {
-
-			if (speedCurrent > 12f) return speedCurrent;
-			else if (super.speed() < 12f) return super.speed();
-			else return speedCurrent = 12f;
+			if (speedCurrent > 12.0) return speedCurrent;
+			else if (super.speed() < 12.0) return super.speed();
+			else return speedCurrent = 12.0;
 
 		} else return speedCurrent = super.speed();
 
 	}
 
-	protected float processing() {
-		super.processing();
+	protected double run(double globalTime) {
+		super.run(globalTime);
 		return 0;
 	}
 
