@@ -2,9 +2,7 @@
 public class Traffic {
 
 	protected static double timeGlobal = 0.0;
-
 	public static void main(String[] arg){
-
 		new Thread() {
 			public void run(){
 				TransportSystem.runGUI();
@@ -13,7 +11,6 @@ public class Traffic {
 		
 		Bicycle bicycle = new Bicycle("Petya", 60);
 		Auto auto = new Auto("GAZ", 151.0, 15, 100000, 100000);
-
 		double w1[][] = {{200.,60.},{320.,150.}};
 		double w2[][] = {{200.,60.},{80.,90.}};
 		double w3[][] = {{320.,300.},{170.,300.}};
@@ -75,8 +72,6 @@ public class Traffic {
 			auto.addWay(way18);
 			auto.addWay(way1);
 		}
-
-
 
 		while(runtimeGlobal(1000000)) {
 			TransportSystem.printTS();

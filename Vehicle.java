@@ -40,19 +40,12 @@ public class Vehicle extends TransportSystem {
 	}
 
 	protected double run(double globalTime) {
-
 		timeGlobal = globalTime;
-
 		speedCurrent = speed();
-		
 		double delta = (timeGlobal - timeCurrent) * speedCurrent;
 		double deltaWay = delta;
-		
 		if (Double.compare(distanceWay + delta, wayCurrent.length) > 0) {
-
 			double deltaOldWay = wayCurrent.length - distanceWay;
-
-			
 			if (waysToTakeList.size() == 1) {
 				delta = deltaOldWay;
 				deltaWay = deltaOldWay;
@@ -60,22 +53,17 @@ public class Vehicle extends TransportSystem {
 				double deltaNewWay = delta - deltaOldWay;
 				waysToTakeList.remove(0);
 				Way tmpWayCurrent = waysToTakeList.get(0);
-
 				//TODO precise calculation of distances in respect to different speed
-				
 				double distToStartPoint0 = distance(wayCurrent.coordinates[1-startPoint], tmpWayCurrent.coordinates[0]);
 				double distToStartPoint1 = distance(wayCurrent.coordinates[1-startPoint], tmpWayCurrent.coordinates[1]);
-
 				if (Double.compare(Math.min(distToStartPoint0, distToStartPoint1), 0.0) > 0) {
 					delta = deltaOldWay;
 					deltaWay = deltaOldWay;
 				} else {
 					double cos = (wayCurrent.coordinates[1 - startPoint][0] - wayCurrent.coordinates[startPoint][0]) / wayCurrent.length;
 					double sin = (wayCurrent.coordinates[1 - startPoint][1] - wayCurrent.coordinates[startPoint][1]) / wayCurrent.length;
-
 					coordinates[0] += cos * deltaOldWay;
 					coordinates[1] += sin * deltaOldWay;
-
 					if (distToStartPoint0 > distToStartPoint1) {
 						startPoint = 1;
 					} else  {
@@ -85,31 +73,23 @@ public class Vehicle extends TransportSystem {
 					distanceWay = 0;
 					deltaWay = deltaNewWay;
 				}
-
 			} else {
 				System.out.println("ERROR waysToTakeList is empty!");
 			}
-
 		}
-
 		mileageAll = mileageAll + delta;
 		distanceWay = distanceWay + deltaWay;
-
 		timeCurrent = timeGlobal;
-
 		double cos = (wayCurrent.coordinates[1 - startPoint][0] - wayCurrent.coordinates[startPoint][0]) / wayCurrent.length;
 		double sin = (wayCurrent.coordinates[1 - startPoint][1] - wayCurrent.coordinates[startPoint][1]) / wayCurrent.length;
-
 		coordinates[0] += cos * deltaWay;
 		coordinates[1] += sin * deltaWay;
-
 		return delta;
 	}
 
-	protected double distance(double[] pointA, double[] pointB) {
+	static public double distance(double[] pointA, double[] pointB) {
 		return Math.sqrt(Math.pow(pointA[0] - pointB[0], 2) + Math.pow(pointA[1] - pointB[1], 2));
 	}
-	
 
 	protected double speed() {
 		if (waysToTakeList.size() == 1 && wayCurrent.length == distanceWay)
@@ -121,7 +101,6 @@ public class Vehicle extends TransportSystem {
 	}
 
 	protected void print() {
-
 		System.out.printf("%-5s", id);
 		System.out.printf("%-15s", name);
 
@@ -134,7 +113,6 @@ public class Vehicle extends TransportSystem {
 		System.out.printf("%-15s",decimalFormat.format(speedCurrent));
 		System.out.printf("%-15s", decimalFormat.format(mileageAll));
 		System.out.printf("%-15s", decimalFormat.format(timeCurrent));
-
 	}
 
 	public void addWay(Way way, int startPoint) {

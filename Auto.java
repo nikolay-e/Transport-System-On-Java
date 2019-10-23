@@ -6,14 +6,14 @@ public class Auto extends Vehicle {
 
 	public Auto(String name, double speedMax) {
 		super(name, speedMax);
-	}	
+	}
 
 	public Auto(String name, double speedMax, double consumption, double tankContent) {
 		super(name, speedMax);
 		this.consumption = consumption;
 		this.tankVolume = 551.0;
 		this.tankContent = tankContent;
-	}	
+	}
 
 	public Auto(String name, double speedMax, double consumption, double tankContent, double tankVolume) {
 		super(name, speedMax);
@@ -23,20 +23,17 @@ public class Auto extends Vehicle {
 	}
 
 	public double tankUp(double volume) {
-
 		if (volume < 0.0) {
 			System.out.println("Error: volume to tank up cannot be negative!");
 			return 0.0;
-		}		
-
+		}
 		double freeVolume = tankVolume - tankContent;
-
 		if (volume >= freeVolume) {
 			tankContent = tankVolume;
 			return freeVolume;
 		} else {
 			tankContent = tankContent + volume;
-			return volume;	
+			return volume;
 		}
 	}
 
@@ -53,9 +50,7 @@ public class Auto extends Vehicle {
 
 	protected double run(double globalTime) {
 		double mileageDelta = super.run(globalTime);
-
 		tankContent = tankContent - mileageDelta * consumption / 100.0;
-
 		if (tankContent < 0.0) {
 			mileageAll = mileageAll + tankContent * 100.0 / consumption;
 			tankContent = 0.0;
