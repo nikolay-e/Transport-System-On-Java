@@ -48,7 +48,7 @@ public class Auto extends Vehicle {
 
 	protected void print() {
 		super.print();
-		System.out.printf("%-15s%-15s%-15s", df.format(consumption), df.format(tankVolume), df.format(tankContent));
+		System.out.printf("%-15s%-15s%-15s", decimalFormat.format(consumption), decimalFormat.format(tankVolume), decimalFormat.format(tankContent));
 	}
 
 	protected double run(double globalTime) {
