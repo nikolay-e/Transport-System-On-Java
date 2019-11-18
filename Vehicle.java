@@ -129,5 +129,4 @@ public class Vehicle extends TransportSystem {
 	public void addWay(Way way) {
 		waysToTakeList.add(way);
 	}
-
 }

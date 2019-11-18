@@ -46,11 +46,9 @@ public class TransportSystem {
 		}
 		System.out.println();
 	}
-
 }
 
 class TSFrame extends JFrame{
-
 	public TSFrame(int width, int height){
 		JPanel panel = new JPanel();
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,32 +85,29 @@ class TSFrame extends JFrame{
 			verticalMax = Math.max(verticalMax, ways.coordinates[1][1]);
 		};
 
-		hotizontalScale = super.getContentPane().getWidth() / (hotizontalMax - hotizontalMin);
-		verticalScale = super.getContentPane().getHeight() / (verticalMax - verticalMin);
+		hotizontalScale = (super.getContentPane().getWidth() * 0.8) / Math.abs(hotizontalMax - hotizontalMin);
+		verticalScale = (super.getContentPane().getHeight() * 0.8) / Math.abs(verticalMax - verticalMin);
 
-		scale =  Math.min(hotizontalScale, verticalScale);
-
-		hotizontalShift = (super.getContentPane().getWidth() - scale * (hotizontalMax - hotizontalMin)) / 2;
-		verticalShift = (super.getContentPane().getHeight() - scale * (verticalMax - verticalMin)) / 2;
+		hotizontalShift = (super.getContentPane().getWidth() - hotizontalScale * (hotizontalMax - hotizontalMin)) / 2;
+		verticalShift = (super.getContentPane().getHeight() - verticalScale * (verticalMax - verticalMin)) / 2;
 
 		for (Way ways : TransportSystem.waysList) {
-			double aX = (hotizontalShift + scale * ways.coordinates[0][0]);
-			double aY = (verticalShift + scale * ways.coordinates[0][1]);
-			double bX = (hotizontalShift + scale * ways.coordinates[1][0]);
-			double bY = (verticalShift + scale * ways.coordinates[1][1]);
+			double aX = (hotizontalShift + hotizontalScale * ways.coordinates[0][0]);
+			double aY = (verticalShift + verticalScale * ways.coordinates[0][1]);
+			double bX = (hotizontalShift + hotizontalScale * ways.coordinates[1][0]);
+			double bY = (verticalShift + verticalScale * ways.coordinates[1][1]);
 
 			Line2D line = new Line2D.Double(aX, aY, bX, bY);
 			g2.draw(line);
-		};
+		}
 
 		for (Vehicle vehicle : TransportSystem.vehiclesList) {
-			double aX = hotizontalShift + scale * (vehicle.coordinates[0]) - 2;
-			double aY = verticalShift + scale * (vehicle.coordinates[1]) - 2;
+			double aX = hotizontalShift + hotizontalScale * (vehicle.coordinates[0]) - 2;
+			double aY = verticalShift + verticalScale * (vehicle.coordinates[1]) - 2;
 
 			Rectangle2D point = new Rectangle2D.Double(aX, aY, 4, 4);
 			g2.draw(point);
 		}
 	}
-
 }
 

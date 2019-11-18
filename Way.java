@@ -9,16 +9,15 @@ public class Way extends TransportSystem {
 	public Way(String name, int limit, double coordinates[][]){
 		waysList.add(this);
 		this.name = name;
-		this.length = Vehicle.distance(coordinates[0], coordinates[1])
+		this.length = Vehicle.distance(coordinates[0], coordinates[1]);
 		this.speedLimit = limit;
 		this.coordinates = coordinates;
 	}
 
 	public Way(int limit, double coordinates[][]){
 		waysList.add(this);
-		this.length = Vehicle.distance(coordinates[0], coordinates[1])
+		this.length = Vehicle.distance(coordinates[0], coordinates[1]);
 		this.speedLimit = limit;
 		this.coordinates = coordinates;
 	}
-
 }
