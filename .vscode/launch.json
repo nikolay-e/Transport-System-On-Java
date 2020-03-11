@@ -6,16 +6,10 @@
 	"configurations": [
 		{
 			"type": "java",
-			"name": "CodeLens (Launch) - Traffic",
+			"name": "Run",
 			"request": "launch",
 			"mainClass": "Traffic",
 			"projectName": "Traffic_32d83bf5"
-		},
-		{
-			"type": "java",
-			"name": "Debug (Launch) - Current File",
-			"request": "launch",
-			"mainClass": "${file}"
 		}
 	]
 }
