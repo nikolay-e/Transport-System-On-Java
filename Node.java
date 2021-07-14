@@ -1,11 +1,9 @@
 public class Node {
 
-    public double coordinates[] = {0.0, 0.0};
-    public int id;
+    public Coordinates coordinates;
 
-	public Node(int id, double coordinates[]) {
-        this.id = id;
-		this.coordinates = coordinates;
+	public Node(double x, double y) {
+		this.coordinates = new Coordinates(x, y);
 	}
 
 }

@@ -6,6 +6,13 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "Launch Traffic",
+			"request": "launch",
+			"mainClass": "Traffic",
+			"projectName": "Traffic_1d0e1591"
+		},
+		{
+			"type": "java",
 			"name": "Run",
 			"request": "launch",
 			"mainClass": "Traffic",

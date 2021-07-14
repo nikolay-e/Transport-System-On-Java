@@ -2,17 +2,16 @@ import java.util.ArrayList;
 
 public class Vehicle extends TransportSystem {
 
-	protected Way wayCurrent;
-	protected int startPoint = 0;
+	protected Way currentWay;
+	protected Node startNodeOnCurrentWay;
 
 	private String name = "";
 	private int id;
 	private static int maxId = 0;
 
 	protected double speedMax = 0.0;
-	protected double speedCurrent = 0.0;
 
-	protected double coordinates[] = {0.0, 0.0};
+	protected Coordinates coordinates;
 
 	protected double distanceWay = 0.0;
 	protected double mileageAll = 0.0;
@@ -29,7 +28,6 @@ public class Vehicle extends TransportSystem {
 	protected Vehicle(String name, double speedMax) {
 		this.name = name;
 		this.speedMax = speedMax;
-		this.speedCurrent = speedMax;
 		initialize();
 	}
 
@@ -37,15 +35,16 @@ public class Vehicle extends TransportSystem {
 		this.id = maxId;
 		maxId += 1;
 		vehiclesList.add(this);
+		this.coordinates = new Coordinates(0.0, 0.0);
 	}
 
-	protected double run(double globalTime) {
+	protected double run(double globalTime) throws Exception {
 		timeGlobal = globalTime;
-		speedCurrent = speed();
-		double delta = (timeGlobal - timeCurrent) * speedCurrent;
+		double currentSpeed = getCurrentSpeed();
+		double delta = (timeGlobal - timeCurrent) * currentSpeed;
 		double deltaWay = delta;
-		if (Double.compare(distanceWay + delta, wayCurrent.length) > 0) {
-			double deltaOldWay = wayCurrent.length - distanceWay;
+		if (Double.compare(distanceWay + delta, currentWay.length) > 0) {
+			double deltaOldWay = currentWay.length - distanceWay;
 			if (waysToTakeList.size() == 1) {
 				delta = deltaOldWay;
 				deltaWay = deltaOldWay;
@@ -53,23 +52,27 @@ public class Vehicle extends TransportSystem {
 				double deltaNewWay = delta - deltaOldWay;
 				waysToTakeList.remove(0);
 				Way tmpWayCurrent = waysToTakeList.get(0);
-				//TODO precise calculation of distances in respect to different speed
-				double distToStartPoint0 = distance(wayCurrent.coordinates[1-startPoint], tmpWayCurrent.coordinates[0]);
-				double distToStartPoint1 = distance(wayCurrent.coordinates[1-startPoint], tmpWayCurrent.coordinates[1]);
-				if (Double.compare(Math.min(distToStartPoint0, distToStartPoint1), 0.0) > 0) {
+				// TODO precise calculation of distances in respect to different speed
+				double distToFistNode = distance(currentWay.getOppositeNode(startNodeOnCurrentWay).coordinates,
+						tmpWayCurrent.fistNode.coordinates);
+				double distToSecondNode = distance(currentWay.getOppositeNode(startNodeOnCurrentWay).coordinates,
+						tmpWayCurrent.secondNode.coordinates);
+				if (Double.compare(Math.min(distToFistNode, distToSecondNode), 0.0) > 0) {
 					delta = deltaOldWay;
 					deltaWay = deltaOldWay;
 				} else {
-					double cos = (wayCurrent.coordinates[1 - startPoint][0] - wayCurrent.coordinates[startPoint][0]) / wayCurrent.length;
-					double sin = (wayCurrent.coordinates[1 - startPoint][1] - wayCurrent.coordinates[startPoint][1]) / wayCurrent.length;
-					coordinates[0] += cos * deltaOldWay;
-					coordinates[1] += sin * deltaOldWay;
-					if (distToStartPoint0 > distToStartPoint1) {
-						startPoint = 1;
-					} else  {
-						startPoint = 0;
+					double cos = (currentWay.getOppositeNode(startNodeOnCurrentWay).coordinates.x - startNodeOnCurrentWay.coordinates.x)
+							/ currentWay.length;
+					double sin = (currentWay.getOppositeNode(startNodeOnCurrentWay).coordinates.y - startNodeOnCurrentWay.coordinates.y)
+							/ currentWay.length;
+					coordinates.x += cos * deltaOldWay;
+					coordinates.y += sin * deltaOldWay;
+					if (distToFistNode > distToSecondNode) {
+						startNodeOnCurrentWay = tmpWayCurrent.secondNode;
+					} else {
+						startNodeOnCurrentWay = tmpWayCurrent.fistNode;
 					}
-					wayCurrent = tmpWayCurrent;
+					currentWay = tmpWayCurrent;
 					distanceWay = 0;
 					deltaWay = deltaNewWay;
 				}
@@ -80,53 +83,56 @@ public class Vehicle extends TransportSystem {
 		mileageAll = mileageAll + delta;
 		distanceWay = distanceWay + deltaWay;
 		timeCurrent = timeGlobal;
-		double cos = (wayCurrent.coordinates[1 - startPoint][0] - wayCurrent.coordinates[startPoint][0]) / wayCurrent.length;
-		double sin = (wayCurrent.coordinates[1 - startPoint][1] - wayCurrent.coordinates[startPoint][1]) / wayCurrent.length;
-		coordinates[0] += cos * deltaWay;
-		coordinates[1] += sin * deltaWay;
+		double cos = (currentWay.getOppositeNode(startNodeOnCurrentWay).coordinates.x - startNodeOnCurrentWay.coordinates.x)
+				/ currentWay.length;
+		double sin = (currentWay.getOppositeNode(startNodeOnCurrentWay).coordinates.y - startNodeOnCurrentWay.coordinates.y)
+				/ currentWay.length;
+		coordinates.x += cos * deltaWay;
+		coordinates.y += sin * deltaWay;
 		return delta;
 	}
 
-	static public double distance(double[] pointA, double[] pointB) {
-		return Math.sqrt(Math.pow(pointA[0] - pointB[0], 2) + Math.pow(pointA[1] - pointB[1], 2));
+	static public double distance(Coordinates pointA, Coordinates pointB) {
+		return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
 	}
 
-	protected double speed() {
-		if (waysToTakeList.size() == 1 && wayCurrent.length == distanceWay)
+	protected double getCurrentSpeed() {
+		if (waysToTakeList.size() == 1 && currentWay.length == distanceWay)
 			return 0.0;
-		else if (wayCurrent.speedLimit > speedMax)
-			return speedMax;
-		else
-			return wayCurrent.speedLimit;
+		else return currentWay.speedLimit < speedMax ? currentWay.speedLimit : speedMax;
 	}
 
 	protected void print() {
 		System.out.printf("%-5s", id);
 		System.out.printf("%-15s", name);
 
-		if (wayCurrent == null)
+		if (currentWay == null)
 			System.out.printf("%-15s", "NOWAY!!!");
 		else
-			System.out.printf("%-15s", wayCurrent.name);
+			System.out.printf("%-15s", currentWay.name);
 
 		System.out.printf("%-15s", decimalFormat.format(speedMax));
-		System.out.printf("%-15s",decimalFormat.format(speedCurrent));
+		System.out.printf("%-15s", decimalFormat.format(getCurrentSpeed()));
 		System.out.printf("%-15s", decimalFormat.format(mileageAll));
 		System.out.printf("%-15s", decimalFormat.format(timeCurrent));
 	}
 
-	public void addWay(Way way, int startPoint) {
-		this.startPoint = startPoint;
+	public void addWay(Way way, Node startNodeOnCurrentWay) {
+		this.startNodeOnCurrentWay = startNodeOnCurrentWay;
 		waysToTakeList.add(way);
-		if (wayCurrent == null) {
-			wayCurrent = waysToTakeList.get(0);
-			speedCurrent = wayCurrent.speedLimit;
-			coordinates[0] = wayCurrent.coordinates[startPoint][0];
-			coordinates[1] = wayCurrent.coordinates[startPoint][1];
+		if (currentWay == null) {
+			currentWay = waysToTakeList.get(0);
+			coordinates.x = startNodeOnCurrentWay.coordinates.x;
+			coordinates.y = startNodeOnCurrentWay.coordinates.y;
 		}
 	}
 
 	public void addWay(Way way) {
+		this.startNodeOnCurrentWay = way.fistNode;
 		waysToTakeList.add(way);
+		if (currentWay == null) {
+			currentWay = waysToTakeList.get(0);
+			coordinates = startNodeOnCurrentWay.coordinates;
+		}
 	}
 }

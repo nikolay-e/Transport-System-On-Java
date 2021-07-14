@@ -4,16 +4,21 @@ public class Bicycle extends Vehicle {
 		super(name, speedMax);
 	}
 
-	protected double speed() {
-		speedCurrent = super.speed() * (double) Math.pow(0.9, (int) mileageAll / 20);
-		if (speedMax > 12.0) {
-			if (speedCurrent > 12.0) return speedCurrent;
-			else if (super.speed() < 12.0) return super.speed();
-			else return speedCurrent = 12.0;
-		} else return speedCurrent = super.speed();
+	@Override
+	protected double getCurrentSpeed() {
+
+        int pow = (int) (mileageAll / 20.0);
+
+        double currentSpeed = speedMax * Math.pow(0.8, pow);
+
+        if (currentSpeed < 20)
+            currentSpeed = 20;
+
+        return currentSpeed;
+
 	}
 
-	protected double run(double globalTime) {
+	protected double run(double globalTime) throws Exception {
 		super.run(globalTime);
 		return 0;
 	}
