@@ -8,21 +8,21 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.njerrry.transportsystem.model.Coordinates;
-import com.njerrry.transportsystem.model.Way;
+import com.njerrry.transportsystem.model.Road;
 
 public class GraphAlgorithm {
 
-    public Map<Coordinates, List<Way>> shortestPathsToCurrentNode = new HashMap<Coordinates, List<Way>>();
+    public Map<Coordinates, List<Road>> shortestPathsToCurrentNode = new HashMap<Coordinates, List<Road>>();
     public Map<Coordinates, Double> distancesToCurrentNode = new HashMap<Coordinates, Double>();
 
     class ToBeServed {
         Coordinates node;
         Double length;
-        List<Way> waylist;
+        List<Road> roadlist;
 
-        public ToBeServed(Coordinates node, List<Way> waylist, Double length) {
+        public ToBeServed(Coordinates node, List<Road> roadlist, Double length) {
             this.node = node;
-            this.waylist = waylist;
+            this.roadlist = roadlist;
             this.length = length;
         }
     }
@@ -30,9 +30,9 @@ public class GraphAlgorithm {
     Queue<ToBeServed> serveNext = new ConcurrentLinkedQueue<>();
 
     Map<Integer, Coordinates> nodes;
-    Map<Coordinates, List<Way>> edges;
+    Map<Coordinates, List<Road>> edges;
 
-    public GraphAlgorithm(Map<Integer, Coordinates> nodes, Map<Coordinates, List<Way>> edges) {
+    public GraphAlgorithm(Map<Integer, Coordinates> nodes, Map<Coordinates, List<Road>> edges) {
         this.nodes = nodes;
         this.edges = edges;
     }
@@ -40,7 +40,7 @@ public class GraphAlgorithm {
     public void calculateDijkstra(Coordinates currentNode) {
 
         try {
-            dijkstra(currentNode, new ArrayList<Way>(), 0.0);
+            dijkstra(currentNode, new ArrayList<Road>(), 0.0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,7 +49,7 @@ public class GraphAlgorithm {
         while (true) {
             try {
                 ts = serveNext.poll();
-                dijkstra(ts.node, ts.waylist, ts.length);
+                dijkstra(ts.node, ts.roadlist, ts.length);
                 System.out.println(++counter);
             } catch (Exception e) {
                 break;
@@ -57,24 +57,25 @@ public class GraphAlgorithm {
         }
     }
 
-    private void dijkstra(Coordinates currentNode, List<Way> mypath, Double mypathLength) throws Exception {
+    private void dijkstra(Coordinates currentNode, List<Road> mypath, Double mypathLength) throws Exception {
 
-        for (Way way : edges.get(currentNode)) {
+        for (Road road : edges.get(currentNode)) {
 
-            List<Way> myNewpath = new ArrayList<Way>(mypath);
-            myNewpath.add(way);
+            List<Road> myNewpath = new ArrayList<Road>(mypath);
+            myNewpath.add(road);
 
-            if (distancesToCurrentNode.get(way.getOppositeNode(currentNode)) == null) {
+            if (distancesToCurrentNode.get(road.getOppositeNode(currentNode)) == null) {
 
-                distancesToCurrentNode.put(way.getOppositeNode(currentNode), mypathLength + way.getLength());
-                shortestPathsToCurrentNode.put(way.getOppositeNode(currentNode), myNewpath);
+                distancesToCurrentNode.put(road.getOppositeNode(currentNode), mypathLength + road.getLength());
+                shortestPathsToCurrentNode.put(road.getOppositeNode(currentNode), myNewpath);
 
-                serveNext.add(new ToBeServed(way.getOppositeNode(currentNode), myNewpath, mypathLength + way.getLength()));
+                serveNext.add(
+                        new ToBeServed(road.getOppositeNode(currentNode), myNewpath, mypathLength + road.getLength()));
             } else {
-                if (mypathLength + way.getLength() < distancesToCurrentNode.get(way.getOppositeNode(currentNode))) {
+                if (mypathLength + road.getLength() < distancesToCurrentNode.get(road.getOppositeNode(currentNode))) {
 
-                    distancesToCurrentNode.put(way.getOppositeNode(currentNode), mypathLength + way.getLength());
-                    shortestPathsToCurrentNode.put(way.getOppositeNode(currentNode), myNewpath);
+                    distancesToCurrentNode.put(road.getOppositeNode(currentNode), mypathLength + road.getLength());
+                    shortestPathsToCurrentNode.put(road.getOppositeNode(currentNode), myNewpath);
 
                 }
             }

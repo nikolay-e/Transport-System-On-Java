@@ -63,8 +63,8 @@ public class Coordinates {
     }
 
     static public double distance(Coordinates pointA, Coordinates pointB) {
-		return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
-	}
+        return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
+    }
 
     public Coordinates getCopy() {
         return new Coordinates(x, y);

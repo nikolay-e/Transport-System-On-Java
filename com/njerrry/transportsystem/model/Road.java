@@ -1,6 +1,6 @@
 package com.njerrry.transportsystem.model;
 
-public class Way {
+public class Road {
 
 	private double length;
 	protected final int DEFAULT_SPEED_LIMIT = 100;
@@ -12,7 +12,7 @@ public class Way {
 	private Coordinates secondNode;
 	protected boolean colorBlack = true;
 
-	public Way(Coordinates fn, Coordinates sn) {
+	public Road(Coordinates fn, Coordinates sn) {
 		this.fistNode = fn;
 		this.secondNode = sn;
 		this.length = Coordinates.distance(fistNode, secondNode);
@@ -20,14 +20,14 @@ public class Way {
 	}
 
 	public double getLength() {
-        return length;
-    }
+		return length;
+	}
 
-    public Coordinates getSecondNode() {
-        return secondNode;
-    }
+	public Coordinates getSecondNode() {
+		return secondNode;
+	}
 
-    public Coordinates getFistNode() {
+	public Coordinates getFistNode() {
 		return fistNode;
 	}
 

@@ -13,27 +13,28 @@ import com.njerrry.transportsystem.graphalgorithm.GraphAlgorithm;
 
 public class Helper {
 
-    public static TransportSystem ReadTransportSystem(String nodesFilename, String edgesFilename) throws FileNotFoundException, IOException {
+	public static TransportSystem ReadTransportSystem(String nodesFilename, String edgesFilename)
+			throws FileNotFoundException, IOException {
 
-        List<Way> listOfWays = new ArrayList<>();
-        List<Vehicle> listOfVehicles = new ArrayList<>();
+		List<Road> listOfRoads = new ArrayList<>();
+		List<Vehicle> listOfVehicles = new ArrayList<>();
 
-
-        Map<Integer, Coordinates> nodes = new HashMap<>();
-		Map<Coordinates, List<Way>> ways = new HashMap<Coordinates, List<Way>>();
+		Map<Integer, Coordinates> nodes = new HashMap<>();
+		Map<Coordinates, List<Road>> roads = new HashMap<Coordinates, List<Road>>();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(nodesFilename))) {
 			for (String line = br.readLine(); line != null; line = br.readLine()) {
 				String[] values = line.split(" ");
-				nodes.put(Integer.parseInt(values[0]), new Coordinates(Double.parseDouble(values[1]), -Double.parseDouble(values[2])));
+				nodes.put(Integer.parseInt(values[0]),
+						new Coordinates(Double.parseDouble(values[1]), -Double.parseDouble(values[2])));
 			}
 		}
-	
+
 		try (BufferedReader br = new BufferedReader(new FileReader(edgesFilename))) {
 			for (String line = br.readLine(); line != null; line = br.readLine()) {
 				String[] values = line.split(" ");
-				Way way = new Way(nodes.get(Integer.parseInt(values[1])), nodes.get(Integer.parseInt(values[2])));
-                listOfWays.add(way);
+				Road road = new Road(nodes.get(Integer.parseInt(values[1])), nodes.get(Integer.parseInt(values[2])));
+				listOfRoads.add(road);
 			}
 		}
 
@@ -42,42 +43,42 @@ public class Helper {
 				String[] l = line.split(" ");
 				int firstNodeId = Integer.parseInt(l[1]);
 				int secondNodeId = Integer.parseInt(l[2]);
-				Way way = new Way(nodes.get(firstNodeId), nodes.get(secondNodeId));
+				Road road = new Road(nodes.get(firstNodeId), nodes.get(secondNodeId));
 
-				//new Vehicle().addWay(way);
+				// new Vehicle().addRoad(road);
 
-				if (ways.get(nodes.get(firstNodeId)) == null) {
-					ways.put(nodes.get(firstNodeId), new ArrayList<Way>());
-					ways.get(nodes.get(firstNodeId)).add(way);
+				if (roads.get(nodes.get(firstNodeId)) == null) {
+					roads.put(nodes.get(firstNodeId), new ArrayList<Road>());
+					roads.get(nodes.get(firstNodeId)).add(road);
 				} else {
-					ways.get(nodes.get(firstNodeId)).add(way);
+					roads.get(nodes.get(firstNodeId)).add(road);
 				}
 
-				if (ways.get(nodes.get(secondNodeId)) == null) {
-					ways.put(nodes.get(secondNodeId), new ArrayList<Way>());
-					ways.get(nodes.get(secondNodeId)).add(way);
+				if (roads.get(nodes.get(secondNodeId)) == null) {
+					roads.put(nodes.get(secondNodeId), new ArrayList<Road>());
+					roads.get(nodes.get(secondNodeId)).add(road);
 				} else {
-					ways.get(nodes.get(secondNodeId)).add(way);
+					roads.get(nodes.get(secondNodeId)).add(road);
 				}
 
 			}
 		}
-
 
 		try (BufferedReader br = new BufferedReader(new FileReader("NA.cvehicles.txt"))) {
 			for (String line = br.readLine(); line != null; line = br.readLine()) {
 				String[] values = line.split(" ");
 
-				GraphAlgorithm ga = new GraphAlgorithm(nodes, ways);
+				GraphAlgorithm ga = new GraphAlgorithm(nodes, roads);
 				ga.calculateDijkstra(nodes.get(Integer.parseInt(values[2])));
-				Vehicle car = new Car(values[0], nodes.get(Integer.parseInt(values[1])), ga.shortestPathsToCurrentNode.get(nodes.get(Integer.parseInt(values[3]))));
+				Vehicle car = new Car(values[0], nodes.get(Integer.parseInt(values[1])),
+						ga.shortestPathsToCurrentNode.get(nodes.get(Integer.parseInt(values[3]))));
 
 				listOfVehicles.add(car);
 			}
 		}
 
-        return new TransportSystem(listOfVehicles, listOfWays);
+		return new TransportSystem(listOfVehicles, listOfRoads);
 
-    }
-    
+	}
+
 }

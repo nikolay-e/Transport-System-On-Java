@@ -13,7 +13,7 @@ public class TransportSystem implements Runnable {
 
 	// Core data
 	private List<Vehicle> vehicleList;
-	private List<Way> wayList;
+	private List<Road> roadList;
 
 	// Map related data
 	private Coordinates mapCenter = new Coordinates();
@@ -23,9 +23,9 @@ public class TransportSystem implements Runnable {
 	// Time counter
 	private double time = 0.0;
 
-	public TransportSystem(List<Vehicle> listOfVehicles, List<Way> listOfWays) {
+	public TransportSystem(List<Vehicle> listOfVehicles, List<Road> listOfRoads) {
 		this.vehicleList = listOfVehicles;
-		this.wayList = listOfWays;
+		this.roadList = listOfRoads;
 		calculateMapSizeValues();
 	}
 
@@ -41,57 +41,54 @@ public class TransportSystem implements Runnable {
 		return horizontalDelta;
 	}
 
-	public List<Way> getWayList() {
-		return wayList;
+	public List<Road> getRoadList() {
+		return roadList;
 	}
 
 	public List<Vehicle> getVehicleList() {
 		return vehicleList;
 	}
 
-	private void printTS() {
-		for (Vehicle vehichle : getVehicleList()) {
-			vehichle.print();
-			System.out.println();
-		}
-		System.out.println();
-	}
-
 	@Override
 	public void run() {
 
-		while (/*time < TIME_TO_RUN*/ true) {
-			printTS();
+		while (/* time < TIME_TO_RUN */ true) {
 
 			for (Vehicle vehichle : getVehicleList()) {
 				try {
-					vehichle.run(time);
+					vehichle.move(time);
 				} catch (Exception e) {
 					LOGGER.log(Level.SEVERE, "Error while running vehicle", e);
 				}
 			}
 
 			time += 1000 / 1000.0;
+
+			try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException occurred while sleeping the thread: " + e.getMessage());
+            }
 		}
 	}
 
 	private void calculateMapSizeValues() {
 
-		double horizontalMin = getWayList().get(0).getFistNode().getX();
-		double horizontalMax = getWayList().get(0).getFistNode().getX();
+		double horizontalMin = getRoadList().get(0).getFistNode().getX();
+		double horizontalMax = getRoadList().get(0).getFistNode().getX();
 
-		double verticalMin = getWayList().get(0).getFistNode().getY();
-		double verticalMax = getWayList().get(0).getFistNode().getY();
+		double verticalMin = getRoadList().get(0).getFistNode().getY();
+		double verticalMax = getRoadList().get(0).getFistNode().getY();
 
-		for (Way ways : getWayList()) {
-			horizontalMin = Math.min(horizontalMin, ways.getFistNode().getX());
-			horizontalMin = Math.min(horizontalMin, ways.getSecondNode().getX());
-			horizontalMax = Math.max(horizontalMax, ways.getFistNode().getX());
-			horizontalMax = Math.max(horizontalMax, ways.getSecondNode().getX());
-			verticalMin = Math.min(verticalMin, ways.getFistNode().getY());
-			verticalMin = Math.min(verticalMin, ways.getSecondNode().getY());
-			verticalMax = Math.max(verticalMax, ways.getFistNode().getY());
-			verticalMax = Math.max(verticalMax, ways.getSecondNode().getY());
+		for (Road roads : getRoadList()) {
+			horizontalMin = Math.min(horizontalMin, roads.getFistNode().getX());
+			horizontalMin = Math.min(horizontalMin, roads.getSecondNode().getX());
+			horizontalMax = Math.max(horizontalMax, roads.getFistNode().getX());
+			horizontalMax = Math.max(horizontalMax, roads.getSecondNode().getX());
+			verticalMin = Math.min(verticalMin, roads.getFistNode().getY());
+			verticalMin = Math.min(verticalMin, roads.getSecondNode().getY());
+			verticalMax = Math.max(verticalMax, roads.getFistNode().getY());
+			verticalMax = Math.max(verticalMax, roads.getSecondNode().getY());
 		}
 
 		horizontalDelta = (horizontalMax - horizontalMin);

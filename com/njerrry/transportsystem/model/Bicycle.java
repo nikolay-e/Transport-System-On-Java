@@ -12,10 +12,10 @@ public class Bicycle extends Vehicle {
 
 	@Override
 	public double getCurrentSpeed() {
-        int pow = (int) (distanceAll / DISTANCE_DROP_SPEED_AFTER);
+		int pow = (int) (totalDistanceTraveled / DISTANCE_DROP_SPEED_AFTER);
 
-        double currentSpeed = speedMax * Math.pow(DROP_SPEED_FACTOR, pow);
+		double currentSpeed = maxSpeed * Math.pow(DROP_SPEED_FACTOR, pow);
 
-        return Math.max(currentSpeed, MIN_SPEED);
+		return Math.max(currentSpeed, MIN_SPEED);
 	}
 }

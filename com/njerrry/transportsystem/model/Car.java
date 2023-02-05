@@ -11,8 +11,8 @@ public class Car extends Vehicle {
 	private double tankVolume = 0.0;
 	private double tankContent = DEFAULT_TANK_VOLUME;
 
-	public Car(String name, Coordinates coordinates, List<Way> waysToTakeList) {
-		super(name, DEFAULT_SPEED_MAX, coordinates, waysToTakeList);
+	public Car(String name, Coordinates coordinates, List<Road> roadsToTakeList) {
+		super(name, DEFAULT_SPEED_MAX, coordinates, roadsToTakeList);
 	}
 
 	public Car(String name, double speedMax, Coordinates coordinates) {
@@ -26,7 +26,8 @@ public class Car extends Vehicle {
 		this.tankContent = Math.min(tankContent, tankVolume);
 	}
 
-	public Car(String name, double speedMax, Coordinates coordinates, double consumption, double tankContent, double tankVolume) {
+	public Car(String name, double speedMax, Coordinates coordinates, double consumption, double tankContent,
+			double tankVolume) {
 		super(name, speedMax, coordinates);
 		this.consumption = consumption;
 		this.tankVolume = tankVolume;
@@ -54,22 +55,16 @@ public class Car extends Vehicle {
 		return freeVolume;
 	}
 
-	public void print() {
-		super.print();
-		System.out.printf("%-15s%-15s%-15s", decimalFormat.format(consumption), decimalFormat.format(tankVolume),
-				decimalFormat.format(tankContent));
-	}
-
-	public double run(double globalTime) throws Exception {
-		double distanceDelta = super.run(globalTime);
+	public double move(double globalTime) throws Exception {
+		double distanceDelta = super.move(globalTime);
 		tankContent = tankContent - distanceDelta * consumption / 100.0;
 		if (tankContent < 0.0) {
-			distanceAll = distanceAll + tankContent * 100.0 / consumption;
+			totalDistanceTraveled += tankContent * 100.0 / consumption;
 			tankContent = 0.0;
 		}
 		return 0.0;
 	}
-	
+
 	@Override
 	public double getCurrentSpeed() {
 		return tankContent == 0 ? 0.0 : super.getCurrentSpeed();
